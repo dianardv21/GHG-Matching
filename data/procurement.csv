@@ -1,1 +1,51 @@
-
+purchase_id,description,true_category_id
+P001,Purchase of 15 laptop computers for graduate researchers,C01
+P002,External monitors for university computer workstations,C01
+P003,High-performance server for data analysis laboratory,C01
+P004,Wireless keyboards and computer mice for staff,C01
+P005,Replacement solid-state drives for desktop PCs,C01
+P006,Benchtop centrifuge for molecular biology laboratory,C02
+P007,Digital microscope for materials research,C02
+P008,Laboratory analytical balance with precision sensor,C02
+P009,Temperature-controlled laboratory incubator,C02
+P010,Portable spectrometer for environmental measurements,C02
+P011,Disposable pipette tips in sterile plastic boxes,C03
+P012,Nitrile gloves for routine laboratory experiments,C03
+P013,Ethanol solvent bottles for chemical analysis,C03
+P014,Glass sample vials for water quality testing,C03
+P015,Single-use syringe filters for laboratory samples,C03
+P016,A4 printer paper for departmental offices,C04
+P017,Blue ballpoint pens and writing notebooks,C04
+P018,Cardboard document folders for administration,C04
+P019,Sticky notes and highlighter marker packs,C04
+P020,Printer toner cartridges for office printing,C04
+P021,Adjustable office desks for research staff,C05
+P022,Ergonomic swivel chairs for administrative offices,C05
+P023,Metal shelving units for archive storage,C05
+P024,Meeting room tables with laminate surfaces,C05
+P025,Wooden cabinets for university offices,C05
+P026,Ready-mix concrete for campus walkway repairs,C06
+P027,Timber boards for interior renovation work,C06
+P028,Mineral wool insulation panels for building upgrade,C06
+P029,Ceramic floor tiles for corridor refurbishment,C06
+P030,Gypsum plasterboard for partition wall construction,C06
+P031,LED ceiling light fixtures for lecture halls,C07
+P032,Copper electrical cables for building installation,C07
+P033,Wall-mounted electrical switches and sockets,C07
+P034,Power distribution panels for facility maintenance,C07
+P035,Replacement circuit breakers for electrical cabinets,C07
+P036,Concentrated floor detergent for campus cleaning,C08
+P037,Disinfectant spray for shared work surfaces,C08
+P038,Bulk liquid hand soap for washrooms,C08
+P039,Glass cleaning solution for building windows,C08
+P040,Industrial degreaser for maintenance workshop,C08
+P041,Vegetarian buffet lunch for academic conference,C09
+P042,Coffee beans for department meeting refreshments,C09
+P043,Sandwich platters for student workshop catering,C09
+P044,Fruit baskets for research symposium attendees,C09
+P045,Prepared hot meals for university event participants,C09
+P046,External sustainability consulting for emissions inventory,C10
+P047,Independent financial audit of research project,C10
+P048,Translation of technical reports into French,C10
+P049,Legal advisory services for procurement contracts,C10
+P050,Data protection consulting for university department,C10
