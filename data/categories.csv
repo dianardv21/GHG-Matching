@@ -1,11 +1,11 @@
-category_id,category_name
-C01,IT Equipment
-C02,Laboratory Equipment
-C03,Laboratory Consumables
-C04,Office Supplies
-C05,Furniture
-C06,Building Materials
-C07,Electrical Equipment
-C08,Cleaning Supplies
-C09,Food and Catering
-C10,Professional Services
+category_id,category_name,category_description
+C01,IT Equipment,"Computers laptops desktops monitors servers keyboards mice printers computer hardware storage devices networking equipment IT accessories,"
+C02,Laboratory Equipment,"Laboratory instruments microscopes centrifuges spectrometers analytical instruments measurement devices laboratory machines scientific equipment,"
+C03,Laboratory Consumables,"Laboratory consumables pipette tips test tubes reagents chemicals  disposable gloves sample containers filters petri dishes laboratory supplies,"
+C04,Office Supplies,"Office supplies paper notebooks pens pencils folders binders envelopes  stationery printing materials toner cartridges administrative supplies,"
+C05,Furniture,"Furniture desks chairs tables cabinets shelves bookcases storage units  office furniture seating workstations furnishing equipment,"
+C06,Building Materials,"Building materials concrete cement bricks timber wood steel insulation  drywall flooring tiles construction materials renovation supplies,"
+C07,Electrical Equipment,"Electrical equipment cables wires switches circuit breakers transformers  power supplies electrical components lighting fixtures connectors,"
+C08,Cleaning Supplies,"Cleaning supplies detergents disinfectants soaps cleaning chemicals  mops brooms brushes wipes paper towels sanitation hygiene products,"
+C09,Food and Catering,"Food and catering meals beverages snacks coffee tea refreshments  catering services food delivery event lunches groceries,"
+C10,Professional Services,Professional services consulting legal services accounting auditing  engineering advice technical support external contractors business services
