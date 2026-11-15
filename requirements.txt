@@ -1,0 +1,9 @@
+# Data processing
+pandas
+numpy
+
+# Machine Learning
+scikit-learn
+
+# Visualization
+matplotlib
