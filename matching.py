@@ -1,3 +1,4 @@
+from time import time
 import pandas as pd
 from pathlib import Path
 import re
@@ -6,8 +7,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
 from sklearn.linear_model import RidgeClassifier
-from time import time
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
+##################################
+### LOADING DATA ###
+# Note: Current procurement data for this project is very limited (~50 entries), 
+# real-world datasets would have a lot more entries, providing a broader vocabulary
+# and more reliable TF-IDF weights. 
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -49,8 +56,8 @@ X_test_tfidf = vectorizer.transform(X_test_text)
 feature_names = vectorizer.get_feature_names_out()
 
 ##################################
-### TF_IDF + RIDGE CLASSIFIER ###
-## A supervised classifier benchmark for the TF-IDF + cosine similarity method
+### RIDGE CLASSIFIER ###
+## A supervised classifier benchmark for the TF-IDF + cosine similarity method.
 
 clf = RidgeClassifier(tol=1e-2, solver="sparse_cg")
 print(f"Ridge Classifier:")
@@ -64,6 +71,7 @@ pred = clf.predict(X_test_tfidf)
 test_time = time() - t0
 print(f"Test time:  {test_time:.3}s")
 
+# Visualization
 fig, ax = plt.subplots(figsize=(12, 10))
 labels = clf.classes_
 display_names = [category_mapping[label] for label in labels]
@@ -75,11 +83,63 @@ ConfusionMatrixDisplay.from_predictions(
     ax=ax,
     xticks_rotation=90
 )
-ax.set_title("RidgeClassifier — Procurement Categories")
+ax.set_title("RidgeClassifier - Procurement Categories")
 
 plt.tight_layout()
-plt.savefig("confusion_matrix.png", dpi=300, bbox_inches="tight")
+plt.savefig("confusion_matrix_ridge.png", dpi=300, bbox_inches="tight")
 plt.show()
 
+# Accuracy score
 score_ridge = accuracy_score(y_test, pred)
 print(f"Accuracy Score: {score_ridge}")
+
+##################################
+### COSINE SIMILARITY (+ TF-IDF) ###
+## Lexical Matching approach. Will fit cosine similarity to test set 
+## for a fair comparison to the RidgeClassifier method.
+
+# Tokenizing category_description and weighting using TF-IDF
+category_ref = emission_cat["category_description"]
+category_ref_tfidf = vectorizer.transform(category_ref)
+
+# Applying cosine similarity to the test set
+procurement_cos = cosine_similarity(X_test_tfidf, category_ref_tfidf)
+
+# Selecting the emission codes
+pred_cos_index = np.argmax(procurement_cos, axis = 1)
+pred_cos_id = emission_cat["category_id"].to_numpy()[pred_cos_index]
+
+# Visualizing the highest score predictions
+fig, ax = plt.subplots(figsize=(12, 10))
+labels = emission_cat["category_id"].to_numpy()
+display_names = [category_mapping[label] for label in labels]
+ConfusionMatrixDisplay.from_predictions(
+    y_test,
+    pred_cos_id,
+    labels=labels,
+    display_labels=display_names,
+    ax=ax,
+    xticks_rotation=90
+)
+ax.set_title("Cosine Similarity - Procurement Categories")
+
+plt.tight_layout()
+plt.savefig("confusion_matrix_cos.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+print(f"\n====\nCosine Similarity:\nPredictions: {pred_cos_id}\n True Values: {y_test}\n")
+print(procurement_cos)
+
+# Accuracy score
+score_cos = accuracy_score(y_test, pred_cos_id)
+print(f"Accuracy Score: {score_cos}")
+
+# Note: If all cosine similarity scores for a procurement are zero,
+# np.argmax() defaults to the first category (index 0).
+# To avoid treating these arbitrary assignments as valid predictions,
+# the following section flags such procurements for manual review.
+
+##################################
+### FLAGGING ###
+# Flag procurement descriptions with zero or low maximum cosine 
+# similarity scores for manual review.
