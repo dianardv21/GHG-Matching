@@ -6,6 +6,8 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+DEFAULT_THRESHOLD = 0.1
+
 
 def normalize_text(text):
     """ 
@@ -23,12 +25,12 @@ def normalize_text(text):
     return text.strip()
 
 
-def flag(procurement_cos, threshold = 0.25):
+def flag(procurement_cos, threshold = DEFAULT_THRESHOLD):
     """
     Flag procurement descriptions with zero or low maximum cosine similarity scores for manual review.
     Input:  
         procurement_cos: 2D array of cosine similarity scores (rows = procurements, columns = emission categories)
-        threshold: Maximum similarity score at/below which a procurement is flagged for review (Default = 0.25)
+        threshold: Maximum similarity score at/below which a procurement is flagged for review (Default = 0.1)
     Output: 
         mask: Boolean mask array indicating which procurements need review
     """
@@ -81,15 +83,9 @@ if __name__ == "__main__":
 
     # --- FLAGGING ---
 
-    # Extracting purchase IDs
-    purchase_ids = procurements["purchase_id"].to_numpy()
-
     # Applying flagging mask
     mask = flag(procurement_cos)
-    flagged_procurement = purchase_ids[mask]
-    print(f"Flagged: {mask.mean():.1%} of the purchases\n")
-    print("Flagged purchase IDs:", flagged_procurement)
-
+    print(f"\nFlagged: {mask.mean():.1%} of the purchases for a threshold of {DEFAULT_THRESHOLD}.\n")
 
     # --- GENERATING CSV ---
     # Output: a .csv file with procurements, assigned emission categories and flag 
@@ -103,10 +99,3 @@ if __name__ == "__main__":
     results_dir = BASE_DIR / "results"
     results_dir.mkdir(parents = True, exist_ok = True)
     output.to_csv(results_dir /"predictions.csv", index = False)
-    
-
-
-
-
-
-
