@@ -1,40 +1,41 @@
-from time import time
-import pandas as pd
 from pathlib import Path
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-import matplotlib.pyplot as plt
-from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
-from sklearn.linear_model import RidgeClassifier
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-from matching import normalize_text, flag
+from time import time
 
-##################################
-### LOADING DATA ###
-# Note: Current procurement data for this project is very limited (~50 entries), 
-# real-world datasets would have a lot more entries, providing a broader vocabulary
-# and more reliable TF-IDF weights. 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import RidgeClassifier
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.model_selection import train_test_split
+
+from matching import flag, normalize_text
+
+# --- LOADING DATA ---
 
 BASE_DIR = Path(__file__).resolve().parent
+results_dir = BASE_DIR / "results"
+results_dir.mkdir(parents = True, exist_ok = True)
 
 procurements = pd.read_csv(BASE_DIR/"data"/"procurement.csv")
 emission_cat = pd.read_csv(BASE_DIR/"data"/"categories.csv")
 
 category_mapping = dict(zip(emission_cat["category_id"], emission_cat["category_name"]))
 
-##################################
-### PREPROCESSING ###
+
+# --- PREPROCESSING ---
 
 procurements["clean_description"] = procurements["description"].fillna("").apply(normalize_text)
 category_ref = emission_cat["category_description"].fillna("").apply(normalize_text)
 
-##################################
-### FITTING TF_IDF ON TRAINING DATA ###
+
+# --- FITTING TF_IDF ON TRAINING DATA ---
 
 # Splitting data into training and test. Using stratification so all categories are represented
 X_train_text, X_test_text, y_train, y_test = train_test_split(procurements["clean_description"], 
 procurements["true_category_id"], test_size=0.4, random_state = 42, stratify = procurements["true_category_id"])
+print(f"\nTraining dataset size: {len(y_train)}\nTesting dataset size: {len(y_test)}")
 
 # Extracting features from training data + category description text corpus
 vectorizer = TfidfVectorizer()
@@ -46,12 +47,12 @@ X_train_tfidf = vectorizer.transform(X_train_text)
 # Extracting features from test data 
 X_test_tfidf = vectorizer.transform(X_test_text)
 
-##################################
-### RIDGE CLASSIFIER ###
-## A supervised classifier benchmark for the TF-IDF + cosine similarity method.
+
+# --- RIDGE CLASSIFIER ---
+# A supervised classifier benchmark for the TF-IDF + cosine similarity method.
 
 clf = RidgeClassifier(tol=1e-2, solver="sparse_cg")
-print(f"Ridge Classifier:")
+print("\n====================\n= Ridge Classifier =\n")
 t0 = time()
 clf.fit(X_train_tfidf, y_train)
 train_time = time() - t0
@@ -77,25 +78,24 @@ ConfusionMatrixDisplay.from_predictions(
 ax.set_title("RidgeClassifier - Procurement Categories")
 
 plt.tight_layout()
-plt.savefig(BASE_DIR / "confusion_matrix_ridge.png", dpi=300, bbox_inches="tight")
+plt.savefig(results_dir / "confusion_matrix_ridge.png", dpi=300, bbox_inches="tight")
 plt.show()
 
 # Accuracy score
 score_ridge = accuracy_score(y_test, pred)
-print(f"Accuracy Score: {score_ridge}")
+print(f"Accuracy Score: {score_ridge:.1%}")
 
-##################################
-### COSINE SIMILARITY (+ TF-IDF) ###
-## Lexical Matching approach. Will compute cosine similarity for test set 
-## for a fair comparison to the RidgeClassifier method.
 
-# Tokenizing category_description and weighting using TF-IDF
+# --- COSINE SIMILARITY (+ TF-IDF) ---
+# Lexical Matching approach. Will compute cosine similarity for test set 
+# for a fair comparison to the RidgeClassifier method.
+
 category_ref_tfidf = vectorizer.transform(category_ref)
 
 # Applying cosine similarity to the test set
 procurement_cos = cosine_similarity(X_test_tfidf, category_ref_tfidf)
 
-# Selecting the emission codes
+# Selecting the emission codes and purchase IDs for test set
 pred_cos_index = np.argmax(procurement_cos, axis = 1)
 pred_cos_id = emission_cat["category_id"].to_numpy()[pred_cos_index]
 
@@ -114,28 +114,30 @@ ConfusionMatrixDisplay.from_predictions(
 ax.set_title("Cosine Similarity - Procurement Categories")
 
 plt.tight_layout()
-plt.savefig(BASE_DIR / "confusion_matrix_cos.png", dpi=300, bbox_inches="tight")
+plt.savefig(results_dir / "confusion_matrix_cos.png", dpi=300, bbox_inches="tight")
 plt.show()
 
-print(f"\n====\nCosine Similarity:")
-#print(f"\nPredictions: {pred_cos_id}\n True Values: {y_test}\n")
-#print(procurement_cos)
-
-# Accuracy score
-score_cos = accuracy_score(y_test, pred_cos_id)
-print(f"Accuracy Score: {score_cos}")
-
-# Note: If all cosine similarity scores for a procurement are zero,
-# np.argmax() defaults to the first category (index 0).
-# To give more insight into various deffinitions of accuracy,
-# the following section uses the flagging system implemented in matching.py to compute
-# an alternative accuracy score that ignores matches with cosine similarity below a certain threshold
-
-# Extracting purchase IDs
-purchase_id_test = procurements.loc[X_test_text.index, "purchase_id"].to_numpy()
+print("\n=====================\n= Cosine Similarity =\n")
 
 # Flagging
 mask = flag(procurement_cos)
-flagged_procurement = purchase_id_test[mask]
-print(f"Flagged: {mask.sum()/len(mask)*100}% of the purchases\n")
+review_rate = mask.mean()
 
+# Zero-similarity rate
+mask_zero = flag(procurement_cos, 0)
+zero_sim_rate = mask_zero.mean()
+
+# Accuracy scores
+score_cos_pure = accuracy_score(y_test, pred_cos_id)
+
+accepted_mask = ~mask
+score_cos_accepted = (accuracy_score(y_test[accepted_mask], pred_cos_id[~mask])
+    if accepted_mask.any() # accounting for edge case: all matches flagged
+    else np.nan
+)
+
+print(f"Accuracy score: {score_cos_pure:.1%}")
+print(f"Accuracy score of unflagged (accepted) matches: {score_cos_accepted:.1%} ("
+    f"{accepted_mask.sum()}/{len(mask)} accepted predictions)")
+print(f"Flagged: {review_rate:.1%} of the purchases")
+print(f"Zero-similarity rate: {zero_sim_rate:.1%}\n")
