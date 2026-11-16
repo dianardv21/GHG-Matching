@@ -9,6 +9,7 @@ from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
 from sklearn.linear_model import RidgeClassifier
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from matching import normalize_text, flag
 
 ##################################
 ### LOADING DATA ###
@@ -26,21 +27,10 @@ category_mapping = dict(zip(emission_cat["category_id"], emission_cat["category_
 ##################################
 ### PREPROCESSING DATASETS ###
 
-def normalize_text(text):
-    """ 
-    Removing punctuation, transforming to lowercase in preparation of using TF-IDF on text
-    """
-
-    text = re.sub(r"[^\w\s]"," ",text) #remove non-words/non-whitespaces
-    text = re.sub(r"\s+"," ",text) #remove repeated whitespace
-    text = text.lower()
-    return text.strip()
-
-
 procurements["clean_description"] = procurements["description"].fillna("").apply(normalize_text)
 
 ##################################
-### TF_IDF MODEL FOR EMISSION MATCHING ###
+### FITTING TF_IDF ON TRAINING DATA ###
 
 # Splitting data into training and test
 X_train_text, X_test_text, y_train, y_test = train_test_split(procurements["clean_description"], 
@@ -139,18 +129,11 @@ print(f"Accuracy Score: {score_cos}")
 # To avoid treating these arbitrary assignments as valid predictions,
 # the following section flags such procurements for manual review.
 
-##################################
-### FLAGGING ###
-# Flag procurement descriptions with zero or low maximum cosine 
-# similarity scores for manual review.
-
-THRESHOLD = 0.25 # experimental value
-
-# Retrieving procurement IDs for test data
+# Extracting purchase IDs
 purchase_id_test = procurements.loc[X_test_text.index, "purchase_id"].to_numpy()
 
-max_cos = np.max(procurement_cos, axis=1)
-mask = max_cos <= THRESHOLD
+# Flagging
+mask = flag(procurement_cos)
 flagged_procurement = purchase_id_test[mask]
+print(f"\n\n\nFlagged:{mask.sum()/len(mask)*100}% of the purchases")
 
-print(f"\n\n\n Flagged:{mask.sum()/len(mask)*100}% of the purchases")
