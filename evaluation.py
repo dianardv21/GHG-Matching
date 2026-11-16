@@ -1,7 +1,6 @@
 from time import time
 import pandas as pd
 from pathlib import Path
-import re
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 import matplotlib.pyplot as plt
@@ -25,9 +24,10 @@ emission_cat = pd.read_csv(BASE_DIR/"data"/"categories.csv")
 category_mapping = dict(zip(emission_cat["category_id"], emission_cat["category_name"]))
 
 ##################################
-### PREPROCESSING DATASETS ###
+### PREPROCESSING ###
 
 procurements["clean_description"] = procurements["description"].fillna("").apply(normalize_text)
+category_ref = emission_cat["category_description"].fillna("").apply(normalize_text)
 
 ##################################
 ### FITTING TF_IDF ON TRAINING DATA ###
@@ -36,16 +36,15 @@ procurements["clean_description"] = procurements["description"].fillna("").apply
 X_train_text, X_test_text, y_train, y_test = train_test_split(procurements["clean_description"], 
 procurements["true_category_id"], test_size=0.4, random_state = 42, stratify = procurements["true_category_id"])
 
-print(y_test.value_counts())
-
-# Extracting features from training data (sparse)
+# Extracting features from training data + category description text corpus
 vectorizer = TfidfVectorizer()
-X_train_tfidf = vectorizer.fit_transform(X_train_text)
+fitting_text = pd.concat([X_train_text, category_ref], ignore_index=True)
+vectorizer.fit(fitting_text)
+
+X_train_tfidf = vectorizer.transform(X_train_text)
 
 # Extracting features from test data 
 X_test_tfidf = vectorizer.transform(X_test_text)
-
-feature_names = vectorizer.get_feature_names_out()
 
 ##################################
 ### RIDGE CLASSIFIER ###
@@ -78,7 +77,7 @@ ConfusionMatrixDisplay.from_predictions(
 ax.set_title("RidgeClassifier - Procurement Categories")
 
 plt.tight_layout()
-plt.savefig("confusion_matrix_ridge.png", dpi=300, bbox_inches="tight")
+plt.savefig(BASE_DIR / "confusion_matrix_ridge.png", dpi=300, bbox_inches="tight")
 plt.show()
 
 # Accuracy score
@@ -87,11 +86,10 @@ print(f"Accuracy Score: {score_ridge}")
 
 ##################################
 ### COSINE SIMILARITY (+ TF-IDF) ###
-## Lexical Matching approach. Will fit cosine similarity to test set 
+## Lexical Matching approach. Will compute cosine similarity for test set 
 ## for a fair comparison to the RidgeClassifier method.
 
 # Tokenizing category_description and weighting using TF-IDF
-category_ref = emission_cat["category_description"].fillna("").apply(normalize_text)
 category_ref_tfidf = vectorizer.transform(category_ref)
 
 # Applying cosine similarity to the test set
@@ -116,11 +114,12 @@ ConfusionMatrixDisplay.from_predictions(
 ax.set_title("Cosine Similarity - Procurement Categories")
 
 plt.tight_layout()
-plt.savefig("confusion_matrix_cos.png", dpi=300, bbox_inches="tight")
+plt.savefig(BASE_DIR / "confusion_matrix_cos.png", dpi=300, bbox_inches="tight")
 plt.show()
 
-print(f"\n====\nCosine Similarity:\nPredictions: {pred_cos_id}\n True Values: {y_test}\n")
-print(procurement_cos)
+print(f"\n====\nCosine Similarity:")
+#print(f"\nPredictions: {pred_cos_id}\n True Values: {y_test}\n")
+#print(procurement_cos)
 
 # Accuracy score
 score_cos = accuracy_score(y_test, pred_cos_id)
@@ -128,9 +127,9 @@ print(f"Accuracy Score: {score_cos}")
 
 # Note: If all cosine similarity scores for a procurement are zero,
 # np.argmax() defaults to the first category (index 0).
-# To avoid treating these arbitrary assignments as valid predictions,
+# To give more insight into various deffinitions of accuracy,
 # the following section uses the flagging system implemented in matching.py to compute
-# an alternative accuracy score that ignores these matches
+# an alternative accuracy score that ignores matches with cosine similarity below a certain threshold
 
 # Extracting purchase IDs
 purchase_id_test = procurements.loc[X_test_text.index, "purchase_id"].to_numpy()
@@ -138,5 +137,5 @@ purchase_id_test = procurements.loc[X_test_text.index, "purchase_id"].to_numpy()
 # Flagging
 mask = flag(procurement_cos)
 flagged_procurement = purchase_id_test[mask]
-print(f"\n\n\nFlagged:{mask.sum()/len(mask)*100}% of the purchases")
+print(f"Flagged: {mask.sum()/len(mask)*100}% of the purchases\n")
 
