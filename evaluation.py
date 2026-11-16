@@ -32,9 +32,11 @@ procurements["clean_description"] = procurements["description"].fillna("").apply
 ##################################
 ### FITTING TF_IDF ON TRAINING DATA ###
 
-# Splitting data into training and test
+# Splitting data into training and test. Using stratification so all categories are represented
 X_train_text, X_test_text, y_train, y_test = train_test_split(procurements["clean_description"], 
-procurements["true_category_id"], test_size=0.4, random_state = 42)
+procurements["true_category_id"], test_size=0.4, random_state = 42, stratify = procurements["true_category_id"])
+
+print(y_test.value_counts())
 
 # Extracting features from training data (sparse)
 vectorizer = TfidfVectorizer()
@@ -127,7 +129,8 @@ print(f"Accuracy Score: {score_cos}")
 # Note: If all cosine similarity scores for a procurement are zero,
 # np.argmax() defaults to the first category (index 0).
 # To avoid treating these arbitrary assignments as valid predictions,
-# the following section flags such procurements for manual review.
+# the following section uses the flagging system implemented in matching.py to compute
+# an alternative accuracy score that ignores these matches
 
 # Extracting purchase IDs
 purchase_id_test = procurements.loc[X_test_text.index, "purchase_id"].to_numpy()
