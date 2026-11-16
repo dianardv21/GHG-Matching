@@ -99,7 +99,7 @@ print(f"Accuracy Score: {score_ridge}")
 ## for a fair comparison to the RidgeClassifier method.
 
 # Tokenizing category_description and weighting using TF-IDF
-category_ref = emission_cat["category_description"]
+category_ref = emission_cat["category_description"].fillna("").apply(normalize_text)
 category_ref_tfidf = vectorizer.transform(category_ref)
 
 # Applying cosine similarity to the test set
@@ -143,3 +143,14 @@ print(f"Accuracy Score: {score_cos}")
 ### FLAGGING ###
 # Flag procurement descriptions with zero or low maximum cosine 
 # similarity scores for manual review.
+
+THRESHOLD = 0.25 # experimental value
+
+# Retrieving procurement IDs for test data
+purchase_id_test = procurements.loc[X_test_text.index, "purchase_id"].to_numpy()
+
+max_cos = np.max(procurement_cos, axis=1)
+mask = max_cos <= THRESHOLD
+flagged_procurement = purchase_id_test[mask]
+
+print(f"\n\n\n Flagged:{mask.sum()/len(mask)*100}% of the purchases")
