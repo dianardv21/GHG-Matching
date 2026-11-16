@@ -1,50 +1,50 @@
 purchase_id,description,emission_code,emission_category,cosine_similarity,marked_for_review
 P001,Purchase of 15 laptop computers for graduate researchers,C01,IT Equipment,0.08507472649424448,True
-P002,External monitors for university computer workstations,C01,IT Equipment,0.209352763650858,True
-P003,High-performance server for data analysis laboratory,C02,Laboratory Equipment,0.10208107046187023,True
+P002,External monitors for university computer workstations,C01,IT Equipment,0.209352763650858,False
+P003,High-performance server for data analysis laboratory,C02,Laboratory Equipment,0.10208107046187023,False
 P004,Wireless keyboards and computer mice for staff,C01,IT Equipment,0.28480570125723614,False
 P005,Replacement solid-state drives for desktop PCs,C01,IT Equipment,0.0,True
-P006,Benchtop centrifuge for molecular biology laboratory,C02,Laboratory Equipment,0.10915400450589481,True
-P007,Digital microscope for materials research,C06,Building Materials,0.1981315605167453,True
-P008,Laboratory analytical balance with precision sensor,C02,Laboratory Equipment,0.2007491317536383,True
-P009,Temperature-controlled laboratory incubator,C02,Laboratory Equipment,0.12537279099566673,True
+P006,Benchtop centrifuge for molecular biology laboratory,C02,Laboratory Equipment,0.10915400450589481,False
+P007,Digital microscope for materials research,C06,Building Materials,0.1981315605167453,False
+P008,Laboratory analytical balance with precision sensor,C02,Laboratory Equipment,0.2007491317536383,False
+P009,Temperature-controlled laboratory incubator,C02,Laboratory Equipment,0.12537279099566673,False
 P010,Portable spectrometer for environmental measurements,C01,IT Equipment,0.0,True
 P011,Disposable pipette tips in sterile plastic boxes,C03,Laboratory Consumables,0.25044808433178306,False
-P012,Nitrile gloves for routine laboratory experiments,C03,Laboratory Consumables,0.2091134424251001,True
+P012,Nitrile gloves for routine laboratory experiments,C03,Laboratory Consumables,0.2091134424251001,False
 P013,Ethanol solvent bottles for chemical analysis,C01,IT Equipment,0.0,True
 P014,Glass sample vials for water quality testing,C03,Laboratory Consumables,0.0886148649622699,True
-P015,Single-use syringe filters for laboratory samples,C03,Laboratory Consumables,0.1885862286349781,True
+P015,Single-use syringe filters for laboratory samples,C03,Laboratory Consumables,0.1885862286349781,False
 P016,A4 printer paper for departmental offices,C04,Office Supplies,0.09089243030301737,True
-P017,Blue ballpoint pens and writing notebooks,C04,Office Supplies,0.1925255731346845,True
-P018,Cardboard document folders for administration,C04,Office Supplies,0.11100106166693098,True
+P017,Blue ballpoint pens and writing notebooks,C04,Office Supplies,0.1925255731346845,False
+P018,Cardboard document folders for administration,C04,Office Supplies,0.11100106166693098,False
 P019,Sticky notes and highlighter marker packs,C09,Food and Catering,0.056600657181702325,True
 P020,Printer toner cartridges for office printing,C04,Office Supplies,0.412172658111175,False
-P021,Adjustable office desks for research staff,C05,Furniture,0.18877266348534968,True
-P022,Ergonomic swivel chairs for administrative offices,C04,Office Supplies,0.10411737559320054,True
-P023,Metal shelving units for archive storage,C05,Furniture,0.18545412352175122,True
+P021,Adjustable office desks for research staff,C05,Furniture,0.18877266348534968,False
+P022,Ergonomic swivel chairs for administrative offices,C04,Office Supplies,0.10411737559320054,False
+P023,Metal shelving units for archive storage,C05,Furniture,0.18545412352175122,False
 P024,Meeting room tables with laminate surfaces,C05,Furniture,0.09313236687276027,True
-P025,Wooden cabinets for university offices,C05,Furniture,0.10415535193931831,True
+P025,Wooden cabinets for university offices,C05,Furniture,0.10415535193931831,False
 P026,Ready-mix concrete for campus walkway repairs,C06,Building Materials,0.08889046405197466,True
-P027,Timber boards for interior renovation work,C06,Building Materials,0.19932677284420314,True
-P028,Mineral wool insulation panels for building upgrade,C06,Building Materials,0.16191311509634682,True
+P027,Timber boards for interior renovation work,C06,Building Materials,0.19932677284420314,False
+P028,Mineral wool insulation panels for building upgrade,C06,Building Materials,0.16191311509634682,False
 P029,Ceramic floor tiles for corridor refurbishment,C06,Building Materials,0.09780732557533642,True
 P030,Gypsum plasterboard for partition wall construction,C06,Building Materials,0.09780732557533642,True
 P031,LED ceiling light fixtures for lecture halls,C07,Electrical Equipment,0.09173303406037311,True
 P032,Copper electrical cables for building installation,C07,Electrical Equipment,0.27555428451050457,False
 P033,Wall-mounted electrical switches and sockets,C07,Electrical Equipment,0.25594972736311644,False
-P034,Power distribution panels for facility maintenance,C07,Electrical Equipment,0.10440604787893928,True
+P034,Power distribution panels for facility maintenance,C07,Electrical Equipment,0.10440604787893928,False
 P035,Replacement circuit breakers for electrical cabinets,C07,Electrical Equipment,0.39771531460784704,False
-P036,Concentrated floor detergent for campus cleaning,C08,Cleaning Supplies,0.1686425171308352,True
+P036,Concentrated floor detergent for campus cleaning,C08,Cleaning Supplies,0.1686425171308352,False
 P037,Disinfectant spray for shared work surfaces,C01,IT Equipment,0.0,True
 P038,Bulk liquid hand soap for washrooms,C01,IT Equipment,0.0,True
-P039,Glass cleaning solution for building windows,C08,Cleaning Supplies,0.17249090401609482,True
+P039,Glass cleaning solution for building windows,C08,Cleaning Supplies,0.17249090401609482,False
 P040,Industrial degreaser for maintenance workshop,C01,IT Equipment,0.0,True
 P041,Vegetarian buffet lunch for academic conference,C01,IT Equipment,0.0,True
-P042,Coffee beans for department meeting refreshments,C09,Food and Catering,0.18610825393280664,True
-P043,Sandwich platters for student workshop catering,C09,Food and Catering,0.1791092982196366,True
+P042,Coffee beans for department meeting refreshments,C09,Food and Catering,0.18610825393280664,False
+P043,Sandwich platters for student workshop catering,C09,Food and Catering,0.1791092982196366,False
 P044,Fruit baskets for research symposium attendees,C01,IT Equipment,0.0,True
-P045,Prepared hot meals for university event participants,C09,Food and Catering,0.16831666308030377,True
-P046,External sustainability consulting for emissions inventory,C10,Professional Services,0.16001894380924134,True
+P045,Prepared hot meals for university event participants,C09,Food and Catering,0.16831666308030377,False
+P046,External sustainability consulting for emissions inventory,C10,Professional Services,0.16001894380924134,False
 P047,Independent financial audit of research project,C01,IT Equipment,0.0,True
 P048,Translation of technical reports into French,C10,Professional Services,0.08388132064069351,True
 P049,Legal advisory services for procurement contracts,C10,Professional Services,0.32875171107766415,False
