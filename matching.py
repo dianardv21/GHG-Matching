@@ -41,19 +41,29 @@ def flag(procurement_cos, threshold = DEFAULT_THRESHOLD):
     return mask
 
 
+def validate_input(df, required_columns):
+    missing_columns = set(required_columns) - set(df.columns)
+
+    if missing_columns:
+        raise ValueError(f"Missing columns: {missing_columns}")
+
+    if df.empty:
+        raise ValueError("Input dataset contains no entries.")
+
+
 # --- MAIN ---
 
 if __name__ == "__main__": 
 
     # --- LOADING DATA ---
-    # Note: Current procurement data for this project is very limited (~50 entries), 
-    # real-world datasets would have a lot more entries, providing a broader vocabulary
-    # and more reliable TF-IDF weights. 
-
+    
     BASE_DIR = Path(__file__).resolve().parent
 
     procurements = pd.read_csv(BASE_DIR/"data"/"procurement.csv")
     emission_cat = pd.read_csv(BASE_DIR/"data"/"categories.csv")
+
+    validate_input(procurements, ["purchase_id", "description"])
+    validate_input(categories, ["category_id", "category_name", "category_description"])
 
     category_mapping = dict(zip(emission_cat["category_id"], emission_cat["category_name"]))
 
