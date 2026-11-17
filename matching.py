@@ -56,14 +56,14 @@ def validate_input(df, required_columns):
 if __name__ == "__main__": 
 
     # --- LOADING DATA ---
-    
+
     BASE_DIR = Path(__file__).resolve().parent
 
     procurements = pd.read_csv(BASE_DIR/"data"/"procurement.csv")
     emission_cat = pd.read_csv(BASE_DIR/"data"/"categories.csv")
 
     validate_input(procurements, ["purchase_id", "description"])
-    validate_input(categories, ["category_id", "category_name", "category_description"])
+    validate_input(emission_cat, ["category_id", "category_name", "category_description"])
 
     category_mapping = dict(zip(emission_cat["category_id"], emission_cat["category_name"]))
 
