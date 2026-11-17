@@ -137,6 +137,15 @@ The file `test_matching.py` contains a series of tests for the text normalizatio
 - Text normalization, including punctuation, capitalization, excess whitespace and empty strings.
 - Zero and low cosine similarity scores.
 - Threshold boundary conditions and custom thresholds.
+- Input validation (missing required columns and empty datasets)
+
+To run the tests from the project directory:
+
+```bash
+python test_matching.py
+```
+
+If all tests pass, the script prints `All tests passed.`
 
 All tests in this repository have been passed by the published code.
 
