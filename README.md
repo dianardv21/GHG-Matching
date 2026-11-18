@@ -3,7 +3,7 @@
 
 ## Background & Objective
 
-Matching purchased goods and services to appropriate emission-factor categories is an important step in Scope 3 greenhouse gas emissions accounting. This project explores the application of natural language processing (NLP) techniques to automate procurement classification while flagging uncertain matches for manual review. Using synthetic university procurement data, it demonstrates an, albeit simplified, approach to a key step in spend-based and activity-based emissions accounting.
+Matching purchased goods and services to appropriate emission-factor categories is an important step in Scope 3 greenhouse gas emissions accounting. This project explores a number of natural language processing (NLP) techniques to automate procurement classification while flagging uncertain matches for manual review. Using synthetic university procurement data, it demonstrates an, albeit simplified, approach to a key step in spend-based and activity-based emissions accounting.
 
 ## Quick Start
 
@@ -71,19 +71,19 @@ The main deliverable of `matching.py` is `results/predictions.csv`, containing t
 
 **Term frequency - Inverse document frequency (TF-IDF)**
 
-Procurement and category descriptions are preprocessed by removing punctuation, converting text to lowercase and normalizing whitespace. 
+Procurement and category descriptions are preprocessed by removing punctuation and converting text to lowercase. 
 
-A TF-IDF vectorizer is used to tokenize the descriptions and weight the frequencies of individual tokens. Words that appear across many documents (e.g. "and", "or", "with") receive lower weights, as they generally provide less useful information for distinguishing between procurement categories. The vectorizer is fitted on a corpus of procurement and category descriptions to include a wider vocabulary that considers both sources in a shared feature space.
+A TF-IDF vectorizer is used to tokenize the descriptions and weight the frequencies of individual tokens. Words that appear across many documents (e.g. "and", "or", "with") receive lower weights, as they generally provide less useful information for distinguishing between procurement categories. The vectorizer is fitted on a corpus of procurement and category descriptions to include a wider vocabulary that considers both sources in a single shared feature space.
 
 **Cosine Similarity**
 
 Cosine similarity measures the similarity between procurement and category descriptions vectors based on their orientation in the feature space. Since TF-IDF weights are nonnegative, the resulting similarity scores range from 0 (no shared terms) to 1 (vectors in the same direction). Each procurement is assigned to the category with the highest cosine similarity score. 
 
-As TF-IDF relies on lexical information rather than semantic relationships, a low similarity score does not necessarily indicate an incorrect match. Similarity scores should not be interpreted as calibrated prediction probabilities (e.g., it might have been the case that the words in the procurement description simply did not appear in the category descriptions)
+As TF-IDF relies on lexical information rather than semantic relationships, a low similarity score does not necessarily mean an incorrect match. Similarity scores shouldn't be interpreted as prediction probabilities (e.g., it might have been the case that the words in the procurement description simply did not appear in the category descriptions)
 
 ### RidgeClassifier
 
-A RidgeClassifier serves as a supervised learning benchmark for the TF-IDF and cosine similarity approach during evaluation. It is trained on the TF-IDF vectors of procurement descriptions and their corresponding true_category_id. 
+A RidgeClassifier serves as a supervised learning benchmark for the TF-IDF and cosine similarity method during evaluation. It is trained on the TF-IDF vectors of procurement descriptions and their corresponding true_category_id. 
 
 The ridge classifier applies an L2 regularization, penalizing the sum of squared coefficients to discourage excessively large weights and reduce overfitting.
 
@@ -91,7 +91,7 @@ The ridge classifier applies an L2 regularization, penalizing the sum of squared
 
 For more accurate matching, the automatic prediction pipeline is supplied with a manual review flagger. 
 
-A heuristic default thershold for the maximum cosine score per procurement of 0.1 has been chosen to build the flagging function, but any user-specified threshold is allowed. For real-world implementation, a sensitivity analysis is required to choose a robust default threshold that balances matching accuracy and manual review workload.
+A heuristic default threshold for the maximum cosine score per procurement of 0.1 has been chosen to build the flagging function, but any user-specified threshold is allowed. For real-world implementation, a sensitivity analysis is required to choose a robust default threshold that balances matching accuracy and the workload of manual checking.
 
 The flagging system is especially relevant when all similarity scores for a procurement are zero. In such cases, the assigned category is by default the first category in `categories.csv`. These should not be treated as valid predictions, and must be manually checked.
 
@@ -99,7 +99,7 @@ The flagging system is especially relevant when all similarity scores for a proc
 
 The file `evaluation.py` compares two classification approaches using TF-IDF representations: cosine similarity and RidgeClassifier, the latter serving as a supervised learning benchmark. 
 
-The procurement dataset is divided into a stratified training and test set (30/20 samples), using a fixed random state of 42 for reproducibility. To avoid data leakage, the TF-IDF vectorizer is fitted exclusively on the training procurement descriptions and the category descriptions. Both methods are evaluated on the same test set.
+The procurement dataset is divided into a stratified training and test set (30/20 samples), using a fixed random state of 42 for reproducibility. The TF-IDF vectorizer is fitted on the training procurement descriptions and the category descriptions. Both methods are evaluated on the same test set.
 
 ### Performance Metrics 
 
@@ -113,7 +113,7 @@ The procurement dataset is divided into a stratified training and test set (30/2
 | Zero-similarity rate         | —               | 10.0%             |
 
 
-On the provided dataset, cosine similarity substantially outperforms RidgeClassifier. This may be partly explained by the limited number of labeled training samples available to the supervised classifier.
+On the provided dataset, cosine similarity substantially outperforms RidgeClassifier. This may be partly because of the limited number of labeled training samples available to the supervised classifier.
 
 Using a similarity threshold of 0.1, three purchases are flagged for manual review, two of which were incorrectly classified. The accuracy among accepted predictions is therefore 88.2%, compared to an overall accuracy of 80%.
 
@@ -132,10 +132,10 @@ The small synthetic procurement dataset and the use of a single train/test split
 `evaluation.py` generates a confusion matrix for each classification approach, saved in the `results/` directory, alongside a summary of evaluation metrics in the terminal.
 
 ## Testing
-The file `test_matching.py` contains a series of tests for the text normalization and manual review flagging functions, covering:
+The file `test_matching.py` contains a series of tests for the text normalization, manual review flagging and input checking functions, covering:
 
 - Text normalization, including punctuation, capitalization, excess whitespace and empty strings.
-- Zero and low cosine similarity scores.
+- Zero and low cosine similarity scores
 - Threshold boundary conditions and custom thresholds.
 - Input validation (missing required columns and empty datasets)
 
@@ -154,8 +154,8 @@ All tests in this repository have been passed by the published code.
 ### Limitations
 
 - Small synthetic procurement dataset and a single train/test split, limiting the generalizability of the evaluation results
-- TF-IDF-based cosine similarity only measures lexical similarity, not prediction confidence or semantic relationships
-- Synthetic procurement descriptions may differ substantially from real-world records, which can contain abbreviations, supplier names or product codes
+- TF-IDF-based cosine similarity only measures the lexical similarity, not prediction confidence or semantic relationships
+- Synthetic procurement descriptions may differ from real-world ones, which can contain abbreviations, supplier names or product codes
 - Limited number and detail of emission category descriptions
 - Heuristic threshold for flagging function, rather than an empirically optimized one
 - TF-IDF weights include statistics from the entire corpus, meaning that refitting the vectorizer on an expanded procurement dataset will change existing predictions
