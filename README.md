@@ -103,19 +103,19 @@ The procurement dataset is divided into a stratified training and test set (30/2
 
 ### Performance Metrics 
 
-| Metric                       | RidgeClassifier | Cosine Similarity |
-|------------------------------|----------------:|------------------:|
-| Overall accuracy             | 20.0%           | 80.0%             |
-| Correct predictions          | 4/20            | 16/20             |
-| Accuracy of accepted matches | —               | 88.2%             |
-| Accepted predictions         | —               | 17/20             |
-| Manual review rate           | —               | 15.0%             |
-| Zero-similarity rate         | —               | 10.0%             |
+| Metric                                    | RidgeClassifier | Cosine Similarity |
+|-------------------------------------------|----------------:|------------------:|
+| Overall accuracy                          | 20.0%           | 80.0%             |
+| Correct predictions                       | 4/20            | 16/20             |
+| Accuracy of accepted (un-flagged) matches | —               | 88.2%             |
+| Accepted predictions                      | —               | 17/20             |
+| Manual review rate                        | —               | 15.0%             |
+| Zero-similarity rate                      | —               | 10.0%             |
 
 
 On the provided dataset, cosine similarity substantially outperforms RidgeClassifier. This may be partly because of the limited number of labeled training samples available to the supervised classifier.
 
-Using a similarity threshold of 0.1, three purchases are flagged for manual review, two of which were incorrectly classified. The accuracy among accepted predictions is therefore 88.2%, compared to an overall accuracy of 80%.
+Using a similarity threshold of 0.1, three purchases are flagged for manual review, two of which were incorrectly classified. The accuracy among the predictions which were not flagged is 88.2%, compared to an overall accuracy of 80%.
 
 The small synthetic procurement dataset and the use of a single train/test split limit the generalizability of these results.
 
@@ -154,7 +154,7 @@ All tests in this repository have been passed by the published code.
 ### Limitations
 
 - Small synthetic procurement dataset and a single train/test split, limiting the generalizability of the evaluation results
-- TF-IDF-based cosine similarity only measures the lexical similarity, not prediction confidence or semantic relationships
+- TF-IDF-based cosine similarity only measures the lexical similarity between descriptions, not prediction confidence or semantic relationships
 - Synthetic procurement descriptions may differ from real-world ones, which can contain abbreviations, supplier names or product codes
 - Limited number and detail of emission category descriptions
 - Heuristic threshold for flagging function, rather than an empirically optimized one
